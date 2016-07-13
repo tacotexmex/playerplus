@@ -2,7 +2,7 @@
 	walking on ice makes player walk faster,
 	stepping through snow or water slows player down,
 	touching a cactus hurts player,
-	and being stuck inside a solid node suffocates player.
+	and if head stuck inside a solid node suffocates player.
 
 	PlayerPlus by TenPlus1
 ]]
@@ -132,4 +132,10 @@ minetest.register_on_joinplayer(function(player)
 	playerplus[name].nod_head = ""
 	playerplus[name].nod_feet = ""
 	playerplus[name].nod_stand = ""
+end)
+
+-- clear when player leaves
+minetest.register_on_leaveplayer(function(player)
+
+	playerplus[ player:get_player_name() ] = nil
 end)
