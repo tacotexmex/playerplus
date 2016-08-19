@@ -11,9 +11,7 @@ https://forum.minetest.net/viewtopic.php?t=10090&p=153667
 - 0.4 - Added suffocation when inside nodes
 - 0.5 - Slow down when walking in water
 - 0.6 - Code tidy and tweak, increased damage by cactus and suffocation
-- 0.7 - Added global 'playerplus' table to hold node names around player
-
-Released under WTFPL
+- 0.7 - Added global 'playerplus' table to hold node names gathered around player
 
 
 API:
