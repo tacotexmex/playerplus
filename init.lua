@@ -1,13 +1,14 @@
 --[[
 	walking on ice makes player walk faster,
-	stepping through snow or water slows player down,
+	stepping through snow slows player down,
 	touching a cactus hurts player,
-	and if head stuck inside a solid node suffocates player.
+	and if head stuck inside a solid node, player suffocates.
 
 	PlayerPlus by TenPlus1
 ]]
 
 playerplus = {}
+
 
 -- get node but use fallback for nil or unknown
 local function node_ok(pos, fallback)
@@ -27,9 +28,11 @@ local function node_ok(pos, fallback)
 	return fallback
 end
 
+
 local armor_mod = minetest.get_modpath("3d_armor")
 local def = {}
 local time = 0
+
 
 minetest.register_globalstep(function(dtime)
 
@@ -43,14 +46,17 @@ minetest.register_globalstep(function(dtime)
 	-- reset time for next check
 	time = 0
 
-	-- check players
-	for _,player in pairs(minetest.get_connected_players()) do
+	-- define locals outside loop
+	local name, pos
+
+	-- loop through players
+	for _,player in ipairs(minetest.get_connected_players()) do
 
 		-- who am I?
-		local name = player:get_player_name()
+		name = player:get_player_name()
 
 		-- where am I?
-		local pos = player:getpos()
+		pos = player:getpos()
 
 		-- what is around me?
 		pos.y = pos.y - 0.1 -- standing on
@@ -84,9 +90,7 @@ minetest.register_globalstep(function(dtime)
 
 		-- standing on snow? if so walk slower
 		if playerplus[name].nod_stand == "default:snow"
-		or playerplus[name].nod_stand == "default:snowblock"
-		-- wading in water? if so walk slower
-		or minetest.registered_nodes[ playerplus[name].nod_feet ].groups.water then
+		or playerplus[name].nod_stand == "default:snowblock" then
 			def.speed = def.speed - 0.4
 		end
 
@@ -94,18 +98,15 @@ minetest.register_globalstep(function(dtime)
 		player:set_physics_override(def.speed, def.jump, def.gravity)
 		--print ("Speed:", def.speed, "Jump:", def.jump, "Gravity:", def.gravity)
 
-		-- Is player suffocating inside node? (Only for solid full cube type nodes
-		-- without damage and without group disable_suffocation = 1.)
+		-- Is player suffocating inside a normal node without no_clip privs?
 		local ndef = minetest.registered_nodes[playerplus[name].nod_head]
 
-		if (ndef.walkable == nil or ndef.walkable == true)
-		and (ndef.drowning == nil or ndef.drowning == 0)
-		and (ndef.damage_per_second == nil or ndef.damage_per_second <= 0)
-		and (ndef.collision_box == nil or ndef.collision_box.type == "regular")
-		and (ndef.node_box == nil or ndef.node_box.type == "regular")
-		and (ndef.groups.disable_suffocation ~= 1)
-		-- Check privilege, too
-		and (not minetest.check_player_privs(name, {noclip = true})) then
+		if ndef.walkable == true
+		and ndef.drowning == 0
+		and ndef.damage_per_second <= 0
+		and ndef.groups.disable_suffocation ~= 1
+		and ndef.drawtype == "normal"
+		and not minetest.check_player_privs(name, {noclip = true}) then
 
 			if player:get_hp() > 0 then
 				player:set_hp(player:get_hp() - 2)
@@ -131,6 +132,7 @@ minetest.register_globalstep(function(dtime)
 
 end)
 
+
 -- set to blank on join (for 3rd party mods)
 minetest.register_on_joinplayer(function(player)
 
@@ -141,6 +143,7 @@ minetest.register_on_joinplayer(function(player)
 	playerplus[name].nod_feet = ""
 	playerplus[name].nod_stand = ""
 end)
+
 
 -- clear when player leaves
 minetest.register_on_leaveplayer(function(player)
