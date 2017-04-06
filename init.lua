@@ -3,6 +3,7 @@
 	stepping through snow slows player down,
 	touching a cactus hurts player,
 	and if head stuck inside a solid node, player suffocates.
+	NEW player knockback effects when punched.
 
 	PlayerPlus by TenPlus1
 ]]
@@ -96,7 +97,7 @@ minetest.register_globalstep(function(dtime)
 
 		-- set player physics
 		player:set_physics_override(def.speed, def.jump, def.gravity)
-		--print ("Speed:", def.speed, "Jump:", def.jump, "Gravity:", def.gravity)
+--		print ("Speed:", def.speed, "Jump:", def.jump, "Gravity:", def.gravity)
 
 		-- Is player suffocating inside a normal node without no_clip privs?
 		local ndef = minetest.registered_nodes[playerplus[name].nod_head]
@@ -150,3 +151,105 @@ minetest.register_on_leaveplayer(function(player)
 
 	playerplus[ player:get_player_name() ] = nil
 end)
+
+
+-- is player knock-back effect enabled?
+if minetest.setting_getbool("player_knockback") ~= false then
+
+minetest.register_entity("playerplus:temp", {
+	physical = true,
+	collisionbox = {-0.35, -1, -0.35, 0.35, 1, 0.35},
+	visual_size = {x = 0, y = 0},
+	visual = "sprite",
+	textures = {"default_wood.png"},
+	stepheight = 0.6,
+	on_activate = function(self, staticdata, dtime)
+		self.timer = (self.timer or 0) + dtime
+		if self.timer > 1 then
+			self.object:remove()
+		end
+	end
+})
+
+
+-- player knock-back function
+local punchy = function(player, hitter, time_from_last_punch, tool_capabilities, dir, damage)
+
+	local damage = 0
+
+	-- get tool damage
+	if tool_capabilities then
+
+		local armor = player:get_armor_groups() or {}
+		local tmp
+
+		for group,_ in pairs( (tool_capabilities.damage_groups or {}) ) do
+
+			tmp = time_from_last_punch / (tool_capabilities.full_punch_interval or 1.4)
+
+			if tmp < 0 then
+				tmp = 0.0
+			elseif tmp > 1 then
+				tmp = 1.0
+			end
+
+			damage = damage + (tool_capabilities.damage_groups[group] or 0) * tmp
+		end
+
+		-- check for knockback value
+		if tool_capabilities.damage_groups["knockback"] then
+			damage = tool_capabilities.damage_groups["knockback"]
+		end
+
+	end
+	-- END tool damage
+
+--	print ("---", player:get_player_name(), damage)
+
+	local vel = damage
+	local pos = player:getpos() ; pos.y = pos.y + 1.0
+	local ent = minetest.add_entity(pos, "playerplus:temp")
+	local obj = ent:get_luaentity()
+	local yaw = player:getyaw()
+
+	if obj and not player:get_attach() then
+
+		player:set_attach(ent, "", {x=0, y=0, z=0}, {x=0, y=0, z=0})
+
+		ent:set_look_horizontal(player:getyaw())
+
+		ent:setvelocity({
+			x = dir.x * vel,
+			y = 0,
+			z = dir.z * vel
+		})
+
+		minetest.after(0.5, function()
+			player:set_detach()
+			ent:remove()
+		end)
+
+		ent:setacceleration({
+			x = dir.x * -1,
+			y = -9.5,
+			z = dir.z * -1
+		})
+
+	elseif obj then
+		ent:remove()
+	end
+end
+
+minetest.register_on_punchplayer(punchy)
+
+end -- END if
+
+minetest.register_tool("playerplus:stick", {
+	description = "KB Stick",
+	inventory_image = "default_stick.png",
+	wield_image = "default_stick.png",
+	tool_capabilities = {
+		full_punch_interval = 1.4,
+		damage_groups = {fleshy = 0, knockback = 11},
+	},
+})
