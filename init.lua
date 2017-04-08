@@ -2,8 +2,8 @@
 	walking on ice makes player walk faster,
 	stepping through snow slows player down,
 	touching a cactus hurts player,
-	and if head stuck inside a solid node, player suffocates.
-	NEW player knockback effects when punched.
+	suffocation when head is inside solid node,
+	player knock-back effects when punched.
 
 	PlayerPlus by TenPlus1
 ]]
@@ -194,6 +194,7 @@ local punchy = function(player, hitter, time_from_last_punch, tool_capabilities,
 			end
 
 			damage = damage + (tool_capabilities.damage_groups[group] or 0) * tmp
+
 		end
 
 		-- check for knockback value
@@ -205,6 +206,8 @@ local punchy = function(player, hitter, time_from_last_punch, tool_capabilities,
 	-- END tool damage
 
 --	print ("---", player:get_player_name(), damage)
+
+	if not dir then return end
 
 	local vel = damage
 	local pos = player:getpos() ; pos.y = pos.y + 1.0
