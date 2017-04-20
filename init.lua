@@ -163,8 +163,11 @@ minetest.register_entity("playerplus:temp", {
 	visual = "sprite",
 	textures = {"default_wood.png"},
 	stepheight = 0.6,
+
 	on_activate = function(self, staticdata, dtime)
+
 		self.timer = (self.timer or 0) + dtime
+
 		if self.timer > 1 then
 			self.object:remove()
 		end
@@ -213,13 +216,11 @@ local punchy = function(player, hitter, time_from_last_punch, tool_capabilities,
 	local pos = player:getpos() ; pos.y = pos.y + 1.0
 	local ent = minetest.add_entity(pos, "playerplus:temp")
 	local obj = ent:get_luaentity()
-	local yaw = player:getyaw()
+	local yaw = player:get_look_horizontal() or 0 ; yaw = -yaw * (180 / math.pi)
 
 	if obj and not player:get_attach() then
 
-		player:set_attach(ent, "", {x=0, y=0, z=0}, {x=0, y=0, z=0})
-
-		ent:set_look_horizontal(player:getyaw())
+		player:set_attach(ent, "", {x = 0, y = 0, z = 0}, {x = 0, y = yaw,z = 0})
 
 		ent:setvelocity({
 			x = dir.x * vel,
