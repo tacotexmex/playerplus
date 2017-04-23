@@ -158,7 +158,7 @@ if minetest.setting_getbool("player_knockback") ~= false then
 
 minetest.register_entity("playerplus:temp", {
 	physical = true,
-	collisionbox = {-0.35, -1, -0.35, 0.35, 1, 0.35},
+	collisionbox = {-0.20, -1, -0.20, 0.20, 1, 0.20},
 	visual_size = {x = 0, y = 0},
 	visual = "sprite",
 	textures = {"default_wood.png"},
