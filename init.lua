@@ -161,7 +161,7 @@ minetest.register_entity("playerplus:temp", {
 	collisionbox = {-0.20, -1, -0.20, 0.20, 1, 0.20},
 	visual_size = {x = 0, y = 0},
 	visual = "sprite",
-	textures = {"default_wood.png"},
+	textures = {"trans.png"},
 	stepheight = 0.6,
 
 	on_activate = function(self, staticdata, dtime)
@@ -174,6 +174,9 @@ minetest.register_entity("playerplus:temp", {
 	end
 })
 
+
+-- check for singleplayer game
+local single = minetest.is_singleplayer()
 
 -- player knock-back function
 local punchy = function(player, hitter, time_from_last_punch, tool_capabilities, dir, damage)
@@ -212,15 +215,17 @@ local punchy = function(player, hitter, time_from_last_punch, tool_capabilities,
 
 	if not dir then return end
 
-	local vel = damage
+	local vel = damage * 2
 	local pos = player:getpos() ; pos.y = pos.y + 1.0
 	local ent = minetest.add_entity(pos, "playerplus:temp")
 	local obj = ent:get_luaentity()
 	local yaw = player:get_look_horizontal() or 0 ; yaw = -yaw * (180 / math.pi)
 
-	if obj and not player:get_attach() then
+	if (obj and not single) or (obj and single and not player:get_attach()) then
 
-		player:set_attach(ent, "", {x = 0, y = 0, z = 0}, {x = 0, y = yaw,z = 0})
+		if single then
+			player:set_attach(ent, "", {x = 0, y = 0, z = 0}, {x = 0, y = yaw,z = 0})
+		end
 
 		ent:setvelocity({
 			x = dir.x * vel,
@@ -228,18 +233,26 @@ local punchy = function(player, hitter, time_from_last_punch, tool_capabilities,
 			z = dir.z * vel
 		})
 
-		minetest.after(0.5, function()
-			player:set_detach()
-			ent:remove()
-		end)
-
 		ent:setacceleration({
 			x = dir.x * -1,
-			y = -9.5,
+			y = 0, -- -9.5,
 			z = dir.z * -1
 		})
 
-	elseif obj then
+		minetest.after(0.25, function()
+
+			if single then
+				player:set_detach()
+			end
+
+			local newpos = ent:getpos() ; newpos.y = newpos.y - 1
+
+			player:moveto(newpos)
+
+			ent:remove()
+		end)
+
+	else
 		ent:remove()
 	end
 end
