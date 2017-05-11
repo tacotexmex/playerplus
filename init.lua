@@ -247,7 +247,7 @@ local punchy = function(player, hitter, time_from_last_punch, tool_capabilities,
 
 			local newpos = ent:getpos() ; newpos.y = newpos.y - 1
 
-			player:moveto(newpos)
+			player:moveto(newpos, true)
 
 			ent:remove()
 		end)
