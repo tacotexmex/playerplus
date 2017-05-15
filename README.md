@@ -35,4 +35,5 @@ player_knockback = false
 
 
 Knock-back is determined by tool strength or a specific 'knockback' value which
-can be added to the tool damage_groups itself.
+can be added to the tool damage_groups itself.  A player with the privelage
+'no_knockback' will not be affected when it's enabled.

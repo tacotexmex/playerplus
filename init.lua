@@ -153,6 +153,11 @@ minetest.register_on_leaveplayer(function(player)
 end)
 
 
+-- add privelage to disable knock-back
+minetest.register_privilege("no_knockback", {
+		description = "Disables player knock-back effect",
+		give_to_singleplayer = false})
+
 -- is player knock-back effect enabled?
 if minetest.setting_getbool("player_knockback") ~= false then
 
@@ -214,6 +219,13 @@ local punchy = function(player, hitter, time_from_last_punch, tool_capabilities,
 --	print ("---", player:get_player_name(), damage)
 
 	if not dir then return end
+
+	-- check if player has 'no_knockback' privelage
+	local privs = minetest.get_player_privs(player:get_player_name())
+
+	if privs["no_knockback"] then
+		return
+	end
 
 	local vel = damage * 2
 	local pos = player:getpos() ; pos.y = pos.y + 1.0
