@@ -175,8 +175,8 @@ minetest.register_entity("playerplus:temp", {
 })
 
 
--- check for singleplayer game
-local single = minetest.is_singleplayer()
+-- check for singleplayer game (moveto disabled for now, has issues)
+local single = true -- minetest.is_singleplayer()
 
 -- player knock-back function
 local punchy = function(player, hitter, time_from_last_punch, tool_capabilities, dir, damage)
