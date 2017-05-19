@@ -180,9 +180,6 @@ minetest.register_entity("playerplus:temp", {
 })
 
 
--- check for singleplayer game (moveto disabled for now, has issues)
-local single = true -- minetest.is_singleplayer()
-
 -- player knock-back function
 local punchy = function(player, hitter, time_from_last_punch, tool_capabilities, dir, damage)
 
@@ -233,11 +230,9 @@ local punchy = function(player, hitter, time_from_last_punch, tool_capabilities,
 	local obj = ent:get_luaentity()
 	local yaw = player:get_look_horizontal() or 0 ; yaw = -yaw * (180 / math.pi)
 
-	if (obj and not single) or (obj and single and not player:get_attach()) then
+	if obj and not player:get_attach() then
 
-		if single then
-			player:set_attach(ent, "", {x = 0, y = 0, z = 0}, {x = 0, y = yaw,z = 0})
-		end
+		player:set_attach(ent, "", {x = 0, y = 0, z = 0}, {x = 0, y = yaw, z = 0})
 
 		ent:setvelocity({
 			x = dir.x * vel,
@@ -253,13 +248,11 @@ local punchy = function(player, hitter, time_from_last_punch, tool_capabilities,
 
 		minetest.after(0.25, function()
 
-			if single then
-				player:set_detach()
-			end
+			player:set_detach()
 
-			local newpos = ent:getpos() ; newpos.y = newpos.y - 1
+--			local newpos = ent:getpos() ; newpos.y = newpos.y - 1
 
-			player:moveto(newpos, true)
+--			player:moveto(newpos, true)
 
 			ent:remove()
 		end)
