@@ -48,7 +48,7 @@ minetest.register_globalstep(function(dtime)
 	time = 0
 
 	-- define locals outside loop
-	local name, pos, def
+	local name, pos, ndef
 
 	-- loop through players
 	for _,player in ipairs(minetest.get_connected_players()) do
@@ -64,9 +64,9 @@ minetest.register_globalstep(function(dtime)
 		playerplus[name].nod_stand = node_ok(pos)
 
 		-- Does the node below me have an on_walk_over function set?
-		def = minetest.registered_nodes[playerplus[name].nod_stand]
-		if def and def.on_walk_over then
-			def.on_walk_over(pos, def, player)
+		ndef = minetest.registered_nodes[playerplus[name].nod_stand]
+		if ndef and ndef.on_walk_over then
+			ndef.on_walk_over(pos, ndef, player)
 		end
 
 		pos.y = pos.y + 1.5 -- head level
