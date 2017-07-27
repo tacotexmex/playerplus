@@ -48,7 +48,7 @@ minetest.register_globalstep(function(dtime)
 	time = 0
 
 	-- define locals outside loop
-	local name, pos, def
+	local name, pos
 
 	-- loop through players
 	for _,player in ipairs(minetest.get_connected_players()) do
@@ -62,12 +62,6 @@ minetest.register_globalstep(function(dtime)
 		-- what is around me?
 		pos.y = pos.y - 0.1 -- standing on
 		playerplus[name].nod_stand = node_ok(pos)
-
-		-- Does the node below me have an on_walk_over function set?
-		def = minetest.registered_nodes[playerplus[name].nod_stand]
-		if def and def.on_walk_over then
-			def.on_walk_over(pos, def, player)
-		end
 
 		pos.y = pos.y + 1.5 -- head level
 		playerplus[name].nod_head = node_ok(pos)
@@ -277,11 +271,3 @@ minetest.register_tool("playerplus:stick", {
 		damage_groups = {fleshy = 0, knockback = 11},
 	},
 })
-
---[[
-minetest.override_item("default:mese", {
-	on_walk_over = function(pos, node, player)
-		print ("---", node.name, player:get_player_name() )
-	end
-})
-]]
