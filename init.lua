@@ -12,17 +12,13 @@ playerplus = {}
 
 
 -- get node but use fallback for nil or unknown
-local function node_ok(pos, fallback)
+local node_ok = function(pos, fallback)
 
 	fallback = fallback or "air"
 
 	local node = minetest.get_node_or_nil(pos)
 
-	if not node then
-		return fallback
-	end
-
-	if minetest.registered_nodes[node.name] then
+	if node and minetest.registered_nodes[node.name] then
 		return node.name
 	end
 
