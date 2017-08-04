@@ -14,7 +14,7 @@ https://forum.minetest.net/viewtopic.php?t=10090&p=153667
 - 0.6 - Code tidy and tweak, increased damage by cactus and suffocation
 - 0.7 - Added global 'playerplus' table to hold node names gathered around player
 - 0.8 - Player knock-back added
-
+- 0.9 - 'on_walk_over' function support added for nodes
 
 API:
 
@@ -37,3 +37,13 @@ player_knockback = false
 Knock-back is determined by tool strength or a specific 'knockback' value which
 can be added to the tool damage_groups itself.  A player with the privelage
 'no_knockback' will not be affected when it's enabled.
+
+
+Node 'on_walk_over' function:
+
+When added to a node definition the function will be called whenever a player
+walks on top of the node e.g.
+
+	on_walk_over = function(pos, node, player)
+		print ("---", node.name, player:get_player_name() )
+	end
