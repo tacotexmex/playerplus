@@ -161,7 +161,7 @@ minetest.register_privilege("no_knockback", {
 		give_to_singleplayer = false})
 
 -- is player knock-back effect enabled?
-if minetest.setting_getbool("player_knockback") ~= false then
+if minetest.settings:get_bool("player_knockback") ~= false then
 
 minetest.register_entity("playerplus:temp", {
 	physical = true,

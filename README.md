@@ -15,6 +15,7 @@ https://forum.minetest.net/viewtopic.php?t=10090&p=153667
 - 0.7 - Added global 'playerplus' table to hold node names gathered around player
 - 0.8 - Player knock-back added
 - 0.9 - 'on_walk_over' function support added for nodes
+- 1.0 - Update to newer functions, requires Minetest 0.4.16 and above to run
 
 API:
 
