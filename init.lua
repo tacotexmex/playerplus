@@ -53,7 +53,7 @@ minetest.register_globalstep(function(dtime)
 		name = player:get_player_name()
 
 		-- where am I?
-		pos = player:getpos()
+		pos = player:get_pos()
 
 		-- what is around me?
 		pos.y = pos.y - 0.1 -- standing on
@@ -227,7 +227,7 @@ local punchy = function(player, hitter, time_from_last_punch, tool_capabilities,
 	end
 
 	local vel = damage * 2
-	local pos = player:getpos() ; pos.y = pos.y + 1.0
+	local pos = player:get_pos() ; pos.y = pos.y + 1.0
 	local ent = minetest.add_entity(pos, "playerplus:temp")
 	local obj = ent:get_luaentity()
 	local yaw = player:get_look_horizontal() or 0 ; yaw = -yaw * (180 / math.pi)
