@@ -67,7 +67,7 @@ minetest.register_globalstep(function(dtime)
 
 		pos.y = pos.y + 1.5 -- head level
 		playerplus[name].nod_head = node_ok(pos)
-	
+
 		pos.y = pos.y - 1.2 -- feet level
 		playerplus[name].nod_feet = node_ok(pos)
 
@@ -98,7 +98,13 @@ minetest.register_globalstep(function(dtime)
 		end
 
 		-- set player physics
-		player:set_physics_override(def.speed, def.jump, def.gravity)
+		if minetest.get_modpath("player_monoids") then
+			player_monoids.speed:add_change(player, def.speed, "playerplus:speed")
+			player_monoids.jump:add_change(player, def.jump, "playerplus:jump")
+			player_monoids.gravity:add_change(player, def.gravity, "playerplus:gravity")
+		else
+			player:set_physics_override(def.speed, def.jump, def.gravity)
+		end
 --		print ("Speed:", def.speed, "Jump:", def.jump, "Gravity:", def.gravity)
 
 		-- Is player suffocating inside a normal node without no_clip privs?
